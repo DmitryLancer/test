@@ -86,9 +86,44 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UserStoreRequest $request, $id)
     {
-        //
+        try {
+            $user = User::find($id);
+            if (!$user) {
+                return response()->json([
+                    'message' => 'Пользователь не найден!'
+                ],404);
+            }
+
+
+            $user->name = $request->name;
+            $user->surname = $request->surname;
+            $user->number = $request->number;
+
+            if ($request->image) {
+                $storage = Storage::disk('public');
+
+                if ($storage->exists($user->image))
+                    $storage->delete($user->image);
+
+                $imageName = Str::random(32).".".$request->image->getClientOriginalExtension();
+                $user->image = $imageName;
+
+                $storage->put($imageName, file_get_contents($request->image));
+            }
+
+            $user->save();
+
+            return response()->json([
+                'message' => 'Пользователь успешно обновлен!'
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Что то пошло не так!'
+            ], 500);
+        }
     }
 
     /**
@@ -96,6 +131,22 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $user = User::find($id);
+        if (!$user){
+            return response()->json([
+                'message' => 'Пользователь не найден'
+            ],404);
+        }
+
+        $storage = Storage::disk('public');
+
+        if ($storage->exists($user->image))
+            $storage->delete($user->image);
+
+        $user->delete();
+
+        return response()->json([
+            'message' => 'Пользователь успешно удален'
+        ],200);
     }
 }

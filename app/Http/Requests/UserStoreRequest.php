@@ -34,7 +34,7 @@ class UserStoreRequest extends FormRequest
                 'name' => 'required|string|min:3|max:40',
                 'surname' => 'required|string|min:3|max:40',
                 'number' => 'required|string',
-                'image' => 'required|image|mimes:jpg,png|max:2048',
+                'image' => 'nullable|image|mimes:jpg,png|max:2048',
             ];
         }
     }
