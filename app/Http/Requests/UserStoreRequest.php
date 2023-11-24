@@ -9,7 +9,7 @@ class UserStoreRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
+    public function authorize()
     {
         return true;
     }
@@ -19,7 +19,7 @@ class UserStoreRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
+    public function rules()
     {
         // не рабочая регулярка - |regex:/^(\+7|\+37)\d{9,11}$/i
         if (request()->isMethod('post')) {
@@ -29,6 +29,7 @@ class UserStoreRequest extends FormRequest
                 'number' => 'required|string',
                 'image' => 'required|image|mimes:jpg,png|max:2048',
             ];
+
         } else {
             return [
                 'name' => 'required|string|min:3|max:40',

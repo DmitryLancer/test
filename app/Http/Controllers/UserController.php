@@ -38,6 +38,12 @@ class UserController extends Controller
     {
         try {
             $imageName = Str::random(32).".".$request->image->getClientOriginalExtension();
+            $validated = $request->validate([
+                'name' => 'required|string|min:3|max:40',
+                'surname' => 'required|string|min:3|max:40',
+                'number' => 'required|string',
+                'image' => 'required|image|mimes:jpg,png|max:2048',
+            ]);
 
             User::create([
                 'name' => $request->name,
@@ -98,6 +104,8 @@ class UserController extends Controller
             }
 
 
+
+
             $user->name = $request->name;
             $user->surname = $request->surname;
             $user->number = $request->number;
@@ -114,6 +122,8 @@ class UserController extends Controller
                 $storage->put($imageName, file_get_contents($request->image));
             }
 
+//
+//            $validated = $request->validated();
             $user->save();
 
             return response()->json([
